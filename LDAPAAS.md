@@ -107,7 +107,7 @@ benefits as it will reduce the administrative load on the VO.
 First the initial flow (on first login) will be shown, then the flow for future 
 use of the services.
 
-# Enrollment Flow
+## Enrollment Flow
 1. The user uses their web browser to go to the "enrollment portal" at 
    `https://vo.example.org`;
 2. The authentication to this service is provided through a SAML authentication 
@@ -132,7 +132,7 @@ the user is approved:
 Now the user can use the services without needing to go back to the enrollment 
 portal.
 
-# Regular Flow
+## Regular Flow
 In case the VO wants to make sure the users are still a member of any of the
 configured identity providers the LDAP account can be marked as "expiring" and
 require a "refresh" visit to the enrollment portal after a reasonable amount of 
