@@ -72,5 +72,68 @@ The following feature are required of the solution:
 * **Scalability**: solution should scale well when increasing the number of 
   users and services;
 * **Interoperability**: should work with most existing available services;
-* **Authorization**: solutuion should be able to authorize certain users for
+* **Authorization**: solution should be able to authorize certain users for
   certain services, e.g.: user X can access service S, but not service T.
+
+# Architecture
+The idea behind LDAPAAS is that a VO specific LDAP is created where a user can
+manage their own account by adding SSH public keys, client certificates and 
+application specific passwords. There will be a VO administrator to approve 
+accounts and link them to specific applications. 
+
+To bootstrap the user accounts a connection is made to an identity federation 
+like SURFconext to filter users that are allowed to create an account in the 
+first place. This is optional and could also be replaced with a "free for all" 
+registration form where a token, provided by the VO administrator, can be used
+to prove the relation with the VO. However, reusing existing accounts has some 
+benefits as it will reduce the administrative load on the VO.
+
+                                       |
+    +-----+                            |                         +---------+
+    | IdP +------------+               |            +------------+ Service |
+    +-----+            |               |            |            +---------+
+                    +--+---------+     |     +------+--+
+    +-----+         | SAML       |     |     | LDAPAAS |         +---------+
+    | IdP +---------+ Identity   +-----|-----+         +---------+ Service |
+    +-----+         | Federation |     |     |         |         +---------+
+                    +--+---------+     |     +------+--+
+    +-----+            |               |            |            +---------+
+    | IdP +------------+               |            +------------+ Service |
+    +-----+                            |                         +---------+
+                                       |
+
+
+# Flow
+First the initial flow (on first login) will be shown, then the flow for future 
+use of the services.
+
+# Enrollment Flow
+1. The user uses their web browser to go to the "enrollment portal" at 
+   `https://vo.example.org`;
+2. The authentication to this service is provided through a SAML authentication 
+   flow to an identity federation;
+3. After the user authenticates they are redirected back to the enrollment 
+   portal;
+4. Either attributes from the identity federation are used, or the user is 
+   allowed to choose their own user identifier and display name and configure
+   it manually.
+
+Here, the user needs to wait to be approved by the VO administrator. Or in case
+tokens are provided to all VO members the token can be used to show that the 
+just created account is an approved account. Also, the services the user is 
+allowed to access need to be determined and set. Now the flow continues after 
+the user is approved:
+
+1. The user uploads a SSH public key to a form to allow access to SSH 
+   resources;
+2. An LDAP account is created with the attributes the user provided and the SSH
+   public key
+
+Now the user can use the services without needing to go back to the enrollment 
+portal.
+
+# Regular Flow
+In case the VO wants to make sure the users are still a member of any of the
+configured identity providers the LDAP account can be marked as "expiring" and
+require a "refresh" visit to the enrollment portal after a reasonable amount of 
+time. Maybe every month, half a year or a year.
