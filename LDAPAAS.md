@@ -67,7 +67,8 @@ mentioned problem:
   authentication and authorization;
 * Be able to **authorize** access to services based on the permissions for a 
   certain user;
-* Should **leverage existing identity federations**.
+* Should **leverage existing identity federations**, by only using the SAML 
+  WebSSO profile.
 
 # Architecture
 The idea behind the proposed solution here is that a dedicated LDAP is created 
